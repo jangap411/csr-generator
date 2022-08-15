@@ -12,7 +12,6 @@ function App() {
       <Header />
       <div className="ui raised very padded text container segment">
         <div className="column">
-          {/* <Step /> */}
           <Form />
         </div>
       </div>

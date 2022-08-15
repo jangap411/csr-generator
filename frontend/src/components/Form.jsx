@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import axios from "axios";
 import { saveAs } from "file-saver";
 import Step from "./Step";
+import Alert from "./Alert";
 
 const Form = () => {
   const API = "http://localhost:5000";
 
+  const [isError, setIsError] = useState(false);
+  const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [startGen, setStartGen] = useState(false);
   const [genComplete, setGenComplete] = useState(false);
@@ -25,32 +28,44 @@ const Form = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = {
-      friendlyName: friendlyName,
-      AN: aName,
-      CN: commonName,
-      OU: Ou,
-      O: Organization,
-      C: city,
-      S: province,
-      L: country,
-    };
+    try {
+      const formData = {
+        friendlyName: friendlyName,
+        AN: aName,
+        CN: commonName,
+        OU: Ou,
+        O: Organization,
+        C: city,
+        S: province,
+        L: country,
+      };
 
-    const data = await axios.post(`${API}/file`, formData);
+      const data = await axios.post(`${API}/file`, formData);
 
-    setCert(data.data);
-    setDetail(true);
-    setIsLoading(true);
+      setCert(data.data);
+      setDetail(true);
+      setIsLoading(true);
+    } catch (err) {
+      setMessage(err.message);
+      setIsError(true);
+      //alert(err.message);
+    }
   };
 
   const GenCert = async () => {
-    setStartGen(true);
-    const cert = await axios.get(`${API}/cert`);
-    setStartGen(false);
-    //console.log(cert.data.message);
-    setCert(cert.data);
-    setGenComplete(true);
-    setreview(true);
+    try {
+      setStartGen(true);
+      const cert = await axios.get(`${API}/cert`);
+      setStartGen(false);
+      //console.log(cert.data.message);
+      setCert(cert.data);
+      setGenComplete(true);
+      setreview(true);
+    } catch (err) {
+      setMessage(err.message);
+      setIsError(true);
+      alert(err.message);
+    }
   };
 
   const homeRedirect = () => {
@@ -59,20 +74,35 @@ const Form = () => {
   };
 
   const downloadCert = async (e) => {
-    const certFile = await axios.get(`${API}/download`);
-    const blob = new Blob([certFile.data], {
-      type: "text/plain;charset=utf-8",
-    });
+    try {
+      const certFile = await axios.get(`${API}/download`);
+      const blob = new Blob([certFile.data], {
+        type: "text/plain;charset=utf-8",
+      });
 
-    setCert(certFile.data);
-    saveAs(blob, "certificate.csr");
-    setDownload(true);
+      setCert(certFile.data);
+      saveAs(blob, "certificate.csr");
+      setDownload(true);
 
-    setTimeout(homeRedirect, 3000);
+      setTimeout(homeRedirect, 3000);
+    } catch (err) {
+      setMessage(err.message);
+      setIsError(true);
+      alert(err.message);
+    }
+  };
+
+  const handleCloseAlert = () => {
+    setIsError(!true);
   };
 
   return (
     <>
+      <Alert
+        isOpen={isError}
+        message={message}
+        handleClose={handleCloseAlert}
+      />
       <form onSubmit={handleSubmit}>
         <Step detail={detail} review={review} download={download} />
 
