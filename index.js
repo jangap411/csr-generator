@@ -1,6 +1,7 @@
 const express = require("express");
 const http = require("http");
 const fs = require("fs");
+const path = require("path");
 const { spawn } = require("node:child_process");
 const morgan = require("morgan");
 const PORT = process.env.PORT || 5000;
@@ -8,14 +9,12 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
+app.use(express.static(path.join(__dirname, "build", "index.html")));
+
 app.use(cors());
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-app.get("/", (req, res) => {
-  res.json({ message: "hello" });
-});
 
 app.post("/file", async (req, res) => {
   //create inf file
@@ -74,18 +73,15 @@ app.post("/file", async (req, res) => {
 
 app.get("/cert", async (req, res) => {
   try {
-    //const inf = `${__dirname}/csr_temp.inf`;
-
-    console.log("\nHello.....\n");
-
-    if (fs.existsSync("./new_req.csr")) {
+    //deletes old certificate if exists.
+    if (fs.existsSync("./certificate.csr")) {
       console.log("file deleted");
-      fs.unlinkSync("./new_req.csr");
+      fs.unlinkSync("./certificate.csr");
     }
 
     //start generate certificate
     const bat = spawn("cmd.exe", ["/c", "gen_cert.bat"]);
-    const cert = `${__dirname}/new_req.csr`;
+    const cert = `${__dirname}/certificate.csr`;
 
     bat.stdout.on("data", (data) => {
       console.log(data.toString());
@@ -98,8 +94,6 @@ app.get("/cert", async (req, res) => {
 
     bat.on("exit", (code) => {
       console.log(`Child Process exited with code ${code}`);
-      // Window.location = "/new_req.csr";
-      //res.status(200).json({ message: cert });
       res.status(200).download(cert);
     });
   } catch (error) {
@@ -109,19 +103,18 @@ app.get("/cert", async (req, res) => {
 });
 
 app.get("/download", (req, res) => {
-  const cert = `${__dirname}/new_req.csr`;
+  const cert = `${__dirname}/certificate.csr`;
   const inf = `${__dirname}/csr_temp.inf`;
 
   res.status(200).download(cert);
   console.log("\nHello.....\n");
-  //remove();
-  //fs.unlink(inf);
 });
 
-const remove = () => {
-  fs.unlink("new_req.csr");
-  console.log("....new_req.csr......");
-};
+app.get("/", (req, res) => {
+  console.log("\nhello...\n");
+  res.status(200).sendFile(path.join(__dirname, "build", "index.html"));
+});
+
 const server = http.createServer(app);
 server.listen(PORT, () => {
   console.log(`\nServer listening on PORT:${PORT}\n`);

@@ -46,12 +46,16 @@ const Form = () => {
   const GenCert = async () => {
     setStartGen(true);
     const cert = await axios.get(`${API}/cert`);
-    console.log("Gen cert...");
     setStartGen(false);
-    console.log(cert.data.message);
+    //console.log(cert.data.message);
     setCert(cert.data);
     setGenComplete(true);
     setreview(true);
+  };
+
+  const homeRedirect = () => {
+    alert("Certificate Downloaded.");
+    window.location = "http://localhost:3000/";
   };
 
   const downloadCert = async (e) => {
@@ -59,19 +63,19 @@ const Form = () => {
     const blob = new Blob([certFile.data], {
       type: "text/plain;charset=utf-8",
     });
+
     setCert(certFile.data);
-    saveAs(blob, "new_cert.csr");
-    console.log(certFile.data);
+    saveAs(blob, "certificate.csr");
     setDownload(true);
 
-    window.location = "http://localhost:3000/";
+    setTimeout(homeRedirect, 3000);
   };
 
   return (
     <>
       <form onSubmit={handleSubmit}>
         <Step detail={detail} review={review} download={download} />
-        {/* <span style={{ marginTop: "1000px" }}></span> */}
+
         <div className="ui form">
           {isLoading ? (
             <div>
@@ -90,7 +94,7 @@ const Form = () => {
                   }
                   onClick={downloadCert}
                 >
-                  Download &nbsp;&nbsp;<i class="download icon"></i>
+                  Download &nbsp;&nbsp;<i className="download icon"></i>
                 </span>
               ) : (
                 <span
@@ -107,7 +111,9 @@ const Form = () => {
             </div>
           ) : (
             <>
-              <h2 className="ui right">Fill in the Following Fields</h2>
+              <h2 className="ui right" style={{ marginTop: "25px" }}>
+                Fill in the Following Fields
+              </h2>
               <div className="field">
                 <label>Friendly Name</label>
                 <input
@@ -198,7 +204,7 @@ const Form = () => {
                   required
                 />
               </div>
-              <button className="ui secondary button" type="submit">
+              <button className="ui positive button" type="submit">
                 Submit &nbsp;&nbsp;<i className="play icon"></i>
               </button>
             </>

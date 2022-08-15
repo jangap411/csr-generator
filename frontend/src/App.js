@@ -1,7 +1,10 @@
 import "./App.css";
 import Form from "./components/Form";
 import Header from "./components/Header";
-import Step from "./components/Step";
+import $ from "jquery";
+window.jQuery = $;
+window.$ = $;
+global.jQuery = $;
 
 function App() {
   return (

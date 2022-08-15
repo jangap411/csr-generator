@@ -1,18 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 
-//{ detail, review, download }
 const Step = ({ detail, review, download }) => {
-  //   const detail = true;
-  //   const review = false;
-  //   const download = true;
-
-  const step1 = review ? "active step" : "completed step"; //: "active step"
-
   return (
     <>
       <div className="ui three top attached steps">
         <div className={detail ? `completed step` : `active step`}>
-          <i class="newspaper outline icon"></i>
+          <i className="newspaper outline icon"></i>
           <div className="content">
             <div className="title">Details</div>
             <div className="description">Enter details</div>
@@ -27,7 +20,7 @@ const Step = ({ detail, review, download }) => {
               : "disabled step"
           }
         >
-          <i class="binoculars icon"></i>
+          <i className="binoculars icon"></i>
           <div className="content">
             <div className="title">Review</div>
             <div className="description">Review details</div>
@@ -42,7 +35,7 @@ const Step = ({ detail, review, download }) => {
               : "disabled step"
           }
         >
-          <i class="certificate icon"></i>
+          <i className="certificate icon"></i>
           <div className="content">
             <div className="title">Download</div>
             <div className="description">Download certificate</div>
