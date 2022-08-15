@@ -23,35 +23,40 @@ app.post("/file", async (req, res) => {
     const { CN, OU, O, L, S, C, friendlyname, AN } = req.body;
 
     const file = ` 
-    [Version]
-    Signature = "$Windows NT$"
+    # OpenSSL configuration file for creating a CSR for a server certificate
+    # Adapt at least the FQDN and ORGNAME lines, and then run 
+    # openssl req -new -config myserver.cnf -keyout myserver.key -out myserver.csr
+    # on the command line.
 
-    [NewRequest]
-    Subject = "CN=${CN}, OU=${OU}, O=${O}, L=${L}, S=${S}, C=${C}"
-    FriendlyName = "${friendlyname}"
-    KeySpec = "AT_KEYEXCHANGE"
-    KeyAlgorithm = RSA
-    KeyUsage = "CERT_DIGITAL_SIGNATURE_KEY_USAGE | CERT_KEY_ENCIPHERMENT_KEY_USAGE"
-    KeyLength = 2048
-    HashAlgorithm = SHA256
-    Exportable = TRUE
-    MachineKeySet = TRUE
-    SMIME = FALSE
-    PrivateKeyArchive = FALSE
-    UserProtected = FALSE
-    UseExistingKeySet = FALSE
-    ProviderName = "Microsoft RSA SChannel Cryptographic Provider"
-    ProviderType = 12
-    RequestType = PKCS10 
-    
-    [Extensions]
-    2.5.29.17 = "{text}"
-    _continue_ = "dns=${CN}&"
-    _continue_ = "dns=${AN}}&"
+    # the fully qualified server (or service) name
+    FQDN = foo.example.org
 
-    [EnhancedKeyUsageExtension]
-    OID = 1.3.6.1.5.5.7.3.1
-    OID = 1.3.6.1.5.5.7.3.2`;
+    # the name of your organization
+    # (see also https://www.switch.ch/pki/participants/)
+    ORGNAME = Example University
+
+    # subjectAltName entries: to add DNS aliases to the CSR, delete
+    # the '#' character in the ALTNAMES line, and change the subsequent
+    # 'DNS:' entries accordingly. Please note: all DNS names must
+    # resolve to the same IP address as the FQDN.
+    ALTNAMES = DNS:$FQDN   # , DNS:bar.example.org , DNS:www.foo.example.org
+
+    # --- no modifications required below ---
+    [ req ]
+    default_bits = 2048
+    default_md = sha256
+    prompt = no
+    encrypt_key = no
+    distinguished_name = dn
+    req_extensions = req_ext
+
+    [ dn ]
+    C = CH
+    O = $ORGNAME
+    CN = $FQDN
+
+    [ req_ext ]
+    subjectAltName = $ALTNAMES`;
 
     await fs.writeFile("csr_temp.inf", file, (err) => {
       if (err) {
