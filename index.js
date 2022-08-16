@@ -14,6 +14,12 @@ app.use(express.static(path.join(__dirname, "build", "index.html")));
 app.use(cors());
 app.use(morgan("dev"));
 app.use(bodyParser.json());
+
+app.get("/", (req, res) => {
+  console.log("\nhello...\n");
+  res.status(200).sendFile(path.join(__dirname, "build", "index.html"));
+});
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post("/file", async (req, res) => {
@@ -108,11 +114,6 @@ app.get("/download", (req, res) => {
 
   res.status(200).download(cert);
   console.log("\nHello.....\n");
-});
-
-app.get("/", (req, res) => {
-  console.log("\nhello...\n");
-  res.status(200).sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 const server = http.createServer(app);
