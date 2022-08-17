@@ -1,0 +1,30 @@
+ 
+    [Version]
+    Signature = "$Windows NT$"
+
+    [NewRequest]
+    Subject = "CN=CN, OU=OU, O=O, L=PG, S=NCD, C=Pom"
+    FriendlyName = "undefined"
+    KeySpec = "AT_KEYEXCHANGE"
+    KeyAlgorithm = RSA
+    KeyUsage = "CERT_DIGITAL_SIGNATURE_KEY_USAGE | CERT_KEY_ENCIPHERMENT_KEY_USAGE"
+    KeyLength = 2048
+    HashAlgorithm = SHA256
+    Exportable = TRUE
+    MachineKeySet = TRUE
+    SMIME = FALSE
+    PrivateKeyArchive = FALSE
+    UserProtected = FALSE
+    UseExistingKeySet = FALSE
+    ProviderName = "Microsoft RSA SChannel Cryptographic Provider"
+    ProviderType = 12
+    RequestType = PKCS10 
+    
+    [Extensions]
+    2.5.29.17 = "{text}"
+    _continue_ = "dns=CN&"
+    _continue_ = "dns=An}&"
+
+    [EnhancedKeyUsageExtension]
+    OID = 1.3.6.1.5.5.7.3.1
+    OID = 1.3.6.1.5.5.7.3.2

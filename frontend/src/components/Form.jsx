@@ -64,13 +64,12 @@ const Form = () => {
     } catch (err) {
       setMessage(err.message);
       setIsError(true);
-      alert(err.message);
     }
   };
 
   const homeRedirect = () => {
     alert("Certificate Downloaded.");
-    window.location = "http://localhost:3000/";
+    window.location = "http://localhost:5000/";
   };
 
   const downloadCert = async (e) => {
