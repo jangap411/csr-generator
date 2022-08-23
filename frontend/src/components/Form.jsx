@@ -5,7 +5,7 @@ import Step from "./Step";
 import Alert from "./Alert";
 
 const Form = () => {
-  const API = "http://localhost:5000";
+  const API = process.env.REACT_APP_API; //"http://localhost:5000";
 
   const [isError, setIsError] = useState(false);
   const [message, setMessage] = useState("");
@@ -46,6 +46,7 @@ const Form = () => {
       setDetail(true);
       setIsLoading(true);
     } catch (err) {
+      console.log(err);
       setMessage(err.message);
       setIsError(true);
       //alert(err.message);
@@ -62,6 +63,8 @@ const Form = () => {
       setGenComplete(true);
       setreview(true);
     } catch (err) {
+      setStartGen(false);
+      console.log(err);
       setMessage(err.message);
       setIsError(true);
     }
@@ -69,15 +72,17 @@ const Form = () => {
 
   const homeRedirect = () => {
     alert("Certificate Downloaded.");
-    window.location = "http://localhost:5000/";
+    window.location = process.env.REACT_APP_API;
   };
 
   const downloadCert = async (e) => {
     try {
+      setStartGen(true);
       const certFile = await axios.get(`${API}/download`);
       const blob = new Blob([certFile.data], {
         type: "text/plain;charset=utf-8",
       });
+      setStartGen(false);
 
       setCert(certFile.data);
       saveAs(blob, "certificate.csr");
@@ -87,6 +92,7 @@ const Form = () => {
     } catch (err) {
       setMessage(err.message);
       setIsError(true);
+      setStartGen(false);
       alert(err.message);
     }
   };
